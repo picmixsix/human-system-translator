@@ -1,0 +1,824 @@
+```html
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human-to-System Translator | Penerjemah Bahasa Manusia ke Bahasa Sistem</title>
+  <!-- Tailwind CSS via CDN untuk styling responsif dan modern -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Kustomisasi scrollbar halus untuk area kode */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.55);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 flex flex-col">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <!-- Ikon Terminal / Kode -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight">Human-to-System Translator</h1>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              GitHub Pages Ready
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Terjemahkan bahasa manusia menjadi perintah &amp; representasi sistem secara instan</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Tombol Panduan GitHub Pages -->
+        <button
+          id="openGuideBtn"
+          type="button"
+          class="px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Cara Deploy GitHub</span>
+        </button>
+
+        <!-- Toggle Tema Gelap / Terang -->
+        <button
+          id="themeToggleBtn"
+          type="button"
+          aria-label="Ubah Tema"
+          class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition"
+          title="Ubah Tema Gelap / Terang"
+        >
+          <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+
+    <!-- Pemilih Bahasa Sistem Target (Tabs Responsif) -->
+    <section aria-label="Pilih Bahasa Sistem Target" class="space-y-2.5">
+      <div class="flex items-center justify-between">
+        <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          1. Pilih Bahasa Sistem Target
+        </label>
+        <span id="modeBadge" class="text-xs font-mono px-2.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+          Mode: JSON Command
+        </span>
+      </div>
+
+      <div id="modeTabs" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+        <button type="button" data-mode="json" class="mode-tab active-tab text-left p-3 rounded-xl border transition flex flex-col gap-1">
+          <span class="text-xs sm:text-sm font-semibold">JSON Command</span>
+          <span class="text-[11px] opacity-75">Intent &amp; Parameter API</span>
+        </button>
+        <button type="button" data-mode="sql" class="mode-tab text-left p-3 rounded-xl border transition flex flex-col gap-1">
+          <span class="text-xs sm:text-sm font-semibold">SQL Query</span>
+          <span class="text-[11px] opacity-75">Kueri Basis Data Aman</span>
+        </button>
+        <button type="button" data-mode="cli" class="mode-tab text-left p-3 rounded-xl border transition flex flex-col gap-1">
+          <span class="text-xs sm:text-sm font-semibold">CLI / Linux Bash</span>
+          <span class="text-[11px] opacity-75">Perintah Terminal OS</span>
+        </button>
+        <button type="button" data-mode="binary" class="mode-tab text-left p-3 rounded-xl border transition flex flex-col gap-1">
+          <span class="text-xs sm:text-sm font-semibold">Biner &amp; Hex</span>
+          <span class="text-[11px] opacity-75">Byte 8-Bit &amp; UTF-8</span>
+        </button>
+        <button type="button" data-mode="base64" class="mode-tab col-span-2 sm:col-span-1 text-left p-3 rounded-xl border transition flex flex-col gap-1">
+          <span class="text-xs sm:text-sm font-semibold">Base64 &amp; Sandi</span>
+          <span class="text-[11px] opacity-75">Encoding Transmisi</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Panel Utama Input & Output -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+
+      <!-- Kolom Kiri: Input Bahasa Manusia -->
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-sm flex flex-col justify-between overflow-hidden">
+        <div class="p-4 sm:p-5 space-y-4 flex-1 flex flex-col">
+          <div class="flex items-center justify-between gap-2">
+            <label for="humanInput" class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              Masukkan Perintah / Bahasa Manusia
+            </label>
+            <button
+              id="clearInputBtn"
+              type="button"
+              class="text-xs text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 transition px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              Bersihkan
+            </button>
+          </div>
+
+          <textarea
+            id="humanInput"
+            rows="6"
+            placeholder="Ketik perintah atau kalimat Anda di sini... Contoh: Tampilkan 5 user terbaru yang aktif"
+            class="w-full flex-1 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-950/80 p-3.5 text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500 resize-none transition"
+          ></textarea>
+
+          <!-- Contoh Cepat Dinamis sesuai Mode -->
+          <div class="space-y-2">
+            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">
+              Contoh Cepat (klik untuk mengisi):
+            </span>
+            <div id="quickExamples" class="flex flex-wrap gap-1.5">
+              <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bar Aksi Translate -->
+        <div class="px-4 sm:px-5 py-3.5 bg-slate-50/90 dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <span class="text-xs text-slate-500 dark:text-slate-400">
+            Tekan <kbd class="px-1.5 py-0.5 text-[11px] font-mono rounded bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">Ctrl + Enter</kbd> untuk translate
+          </span>
+          <button
+            id="translateBtn"
+            type="button"
+            class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 active:scale-[0.99] text-white font-semibold text-sm shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>Translate ke Bahasa Sistem</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Kolom Kanan: Hasil Bahasa Sistem -->
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-sm flex flex-col justify-between overflow-hidden">
+        <div class="p-4 sm:p-5 space-y-3 flex-1 flex flex-col">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Hasil Bahasa Sistem</h2>
+              <span id="syntaxTag" class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                JSON
+              </span>
+            </div>
+
+            <!-- Tombol Copy / Salin -->
+            <button
+              id="copyBtn"
+              type="button"
+              class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-indigo-600 text-slate-700 hover:text-white dark:bg-slate-800 dark:hover:bg-indigo-600 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5"
+            >
+              <svg id="copyIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <svg id="checkIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 hidden text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span id="copyBtnText">Copy / Salin</span>
+            </button>
+          </div>
+
+          <!-- Area Tampilan Kode / Terminal -->
+          <div class="relative flex-1 rounded-xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs sm:text-sm text-slate-100 overflow-auto min-h-[210px] max-h-[340px]">
+            <pre id="systemOutputDisplay" class="whitespace-pre-wrap break-words leading-relaxed"></pre>
+            <!-- Textarea tersembunyi untuk fallback salin teks mentah yang bersih -->
+            <textarea id="rawOutputCopy" class="sr-only" aria-hidden="true" readonly></textarea>
+          </div>
+
+          <!-- Penjelasan Cara Sistem Membaca Perintah -->
+          <div class="rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/70 dark:border-indigo-800/40 p-3 flex items-start gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <div class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              <span class="font-semibold text-indigo-700 dark:text-indigo-300">Analisis Sistem: </span>
+              <span id="systemExplanation">Ketik kalimat perintah di kolom kiri lalu klik Translate untuk melihat bagaimana mesin menerjemahkannya.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Status Output -->
+        <div class="px-4 sm:px-5 py-3 bg-slate-50/90 dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <span id="outputStats">0 karakter • 0 byte</span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Client-Side Engine Aktif
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panduan Singkat 3 Langkah Upload ke GitHub Pages -->
+    <section id="githubGuideSection" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 sm:p-6 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-500" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+            </svg>
+            Cara Hosting Aplikasi Ini di GitHub Pages (3 Langkah Mudah)
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            File <code class="font-mono text-indigo-600 dark:text-indigo-400">index.html</code> ini berdiri sendiri tanpa server backend, sehingga gratis di-host selamanya di GitHub Pages.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+          <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold">1</span>
+          <h4 class="font-semibold text-sm text-slate-800 dark:text-slate-100">Buat Repositori Baru</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            Masuk ke GitHub, klik <strong>New Repository</strong>, beri nama (misal <code class="font-mono">human-system-translator</code>), pilih <strong>Public</strong>, lalu klik <strong>Create repository</strong>.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+          <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold">2</span>
+          <h4 class="font-semibold text-sm text-slate-800 dark:text-slate-100">Upload File index.html</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            Klik <strong>Add file &rarr; Upload files</strong>, unggah file <code class="font-mono">index.html</code> ini ke folder utama (root), lalu klik tombol hijau <strong>Commit changes</strong>.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+          <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold">3</span>
+          <h4 class="font-semibold text-sm text-slate-800 dark:text-slate-100">Aktifkan GitHub Pages</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            Buka tab <strong>Settings &rarr; Pages</strong>, pada bagian <em>Branch</em> pilih <strong>main</strong> dan folder <strong>/(root)</strong>, lalu klik <strong>Save</strong>. Tautan web Anda siap dalam ±1 menit!
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Notifikasi Tersalin -->
+  <div
+    id="copyToast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-3 transition-all duration-200 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-sm font-medium"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <span>Tersalin! Siap di-paste ke aplikasi Anda.</span>
+  </div>
+
+  <!-- Logika Aplikasi Client-Side -->
+  <script>
+    // Konfigurasi Mode & Contoh Cepat
+    const MODES = {
+      json: {
+        label: 'JSON Command',
+        tag: 'JSON',
+        placeholder: 'Contoh: Tampilkan 5 pesanan terbaru yang belum dibayar',
+        examples: [
+          'Tampilkan 5 user terbaru yang aktif',
+          'Kirim email laporan bulanan ke admin@perusahaan.id',
+          'Buat jadwal rapat besok jam 10 pagi',
+          'Hapus file sementara yang lebih dari 30 hari'
+        ]
+      },
+      sql: {
+        label: 'SQL Query',
+        tag: 'SQL (Parameterized)',
+        placeholder: 'Contoh: Tampilkan 10 pelanggan aktif dari Jakarta urutkan berdasarkan terbaru',
+        examples: [
+          'Tampilkan 5 user terbaru yang aktif',
+          'Hitung total pesanan bulan ini yang sudah lunas',
+          'Cari produk dengan stok kurang dari 10',
+          'Tampilkan 20 transaksi dengan nilai di atas 500000'
+        ]
+      },
+      cli: {
+        label: 'CLI / Linux Bash',
+        tag: 'BASH / SHELL',
+        placeholder: 'Contoh: Cari semua file pdf di dalam folder dokumen',
+        examples: [
+          'Cari file pdf di folder dokumen',
+          'Cek penggunaan disk dan ruang kosong',
+          'Kompres folder proyek menjadi arsip tar.gz',
+          'Lihat 20 baris terakhir log aplikasi'
+        ]
+      },
+      binary: {
+        label: 'Kode Biner & Hex',
+        tag: 'BINARY + HEX (UTF-8)',
+        placeholder: 'Contoh: Halo Komputer!',
+        examples: [
+          'Halo Dunia!',
+          'Akses Diterima 2026',
+          'OK',
+          'Sandi Rahasia'
+        ]
+      },
+      base64: {
+        label: 'Base64 & Sandi Sistem',
+        tag: 'BASE64 / PAYLOAD',
+        placeholder: 'Contoh: Token akses rahasia untuk server produksi',
+        examples: [
+          'Pesan rahasia untuk sistem internal',
+          'user:admin|role:superuser',
+          '{"status":"verified","code":200}',
+          'Kunci API Rahasia 12345'
+        ]
+      }
+    };
+
+    let currentMode = 'json';
+    let currentRawOutput = '';
+
+    // Elemen DOM
+    const htmlEl = document.documentElement;
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const openGuideBtn = document.getElementById('openGuideBtn');
+    const githubGuideSection = document.getElementById('githubGuideSection');
+    const modeTabs = document.querySelectorAll('.mode-tab');
+    const modeBadge = document.getElementById('modeBadge');
+    const syntaxTag = document.getElementById('syntaxTag');
+    const humanInput = document.getElementById('humanInput');
+    const quickExamples = document.getElementById('quickExamples');
+    const translateBtn = document.getElementById('translateBtn');
+    const clearInputBtn = document.getElementById('clearInputBtn');
+    const systemOutputDisplay = document.getElementById('systemOutputDisplay');
+    const rawOutputCopy = document.getElementById('rawOutputCopy');
+    const systemExplanation = document.getElementById('systemExplanation');
+    const outputStats = document.getElementById('outputStats');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyBtnText = document.getElementById('copyBtnText');
+    const copyIcon = document.getElementById('copyIcon');
+    const checkIcon = document.getElementById('checkIcon');
+    const copyToast = document.getElementById('copyToast');
+
+    // Escape HTML agar tampilan sintaks aman dari XSS
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Penyorotan sintaks ringan untuk JSON & SQL
+    function highlightSyntax(rawText, mode) {
+      const escaped = escapeHtml(rawText);
+      if (mode === 'json') {
+        return escaped
+          .replace(/(&quot;.*?&quot;)(\s*:)/g, '<span class="text-sky-400">$1</span>$2')
+          .replace(/:\s*(&quot;.*?&quot;)/g, ': <span class="text-emerald-400">$1</span>')
+          .replace(/:\s*(\d+(\.\d+)?)/g, ': <span class="text-amber-400">$1</span>')
+          .replace(/:\s*(true|false|null)/g, ': <span class="text-purple-400">$1</span>');
+      }
+      if (mode === 'sql') {
+        return escaped
+          .replace(/\b(SELECT|FROM|WHERE|AND|OR|ORDER BY|LIMIT|COUNT|SUM|GROUP BY|DESC|ASC|AS|INNER JOIN|ON)\b/g, '<span class="text-sky-400 font-semibold">$1</span>')
+          .replace(/(--.*)/g, '<span class="text-slate-400 italic">$1</span>')
+          .replace(/(&quot;.*?&quot;|&#39;.*?&#39;|\$[0-9]+|:[a-zA-Z_]+)/g, '<span class="text-emerald-400">$1</span>');
+      }
+      if (mode === 'cli') {
+        return escaped
+          .replace(/^(#.*)/gm, '<span class="text-slate-400 italic">$1</span>')
+          .replace(/^(\$ )/gm, '<span class="text-emerald-400 font-bold">$1</span>');
+      }
+      return escaped;
+    }
+
+    // 1. Engine Penerjemah: JSON Command / Intent Schema
+    function translateToJSON(text) {
+      const lower = text.toLowerCase();
+      let intent = 'execute_query';
+      let riskLevel = 'low';
+
+      if (/(tampilkan|lihat|cari|ambil|daftar|show|get|list|find)/.test(lower)) {
+        intent = 'read_data';
+      } else if (/(buat|tambah|simpan|jadwalkan|create|add|insert)/.test(lower)) {
+        intent = 'create_resource';
+        riskLevel = 'medium';
+      } else if (/(ubah|edit|perbarui|ganti|update)/.test(lower)) {
+        intent = 'update_resource';
+        riskLevel = 'medium';
+      } else if (/(hapus|buang|bersihkan|delete|remove|drop)/.test(lower)) {
+        intent = 'delete_resource';
+        riskLevel = 'high';
+      } else if (/(kirim|email|notifikasi|send|notify)/.test(lower)) {
+        intent = 'dispatch_message';
+        riskLevel = 'medium';
+      }
+
+      // Ekstraksi angka (limit / durasi / nilai)
+      const numberMatch = lower.match(/\b(\d+)\b/);
+      const limitValue = numberMatch ? parseInt(numberMatch[1], 10) : null;
+
+      // Ekstraksi entitas target
+      let targetEntity = 'general_record';
+      if (/(user|pengguna|akun|pelanggan|member)/.test(lower)) targetEntity = 'users';
+      else if (/(pesanan|order|transaksi|pembayaran)/.test(lower)) targetEntity = 'orders';
+      else if (/(file|berkas|dokumen|folder)/.test(lower)) targetEntity = 'filesystem';
+      else if (/(email|pesan|laporan)/.test(lower)) targetEntity = 'notifications';
+      else if (/(rapat|jadwal|agenda|meeting)/.test(lower)) targetEntity = 'calendar_events';
+
+      // Ekstraksi email jika ada
+      const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+
+      // Ekstraksi filter kondisi
+      const filters = {};
+      if (/aktif/.test(lower)) filters.status = 'active';
+      if (/belum dibayar|pending|tertunda/.test(lower)) filters.payment_status = 'unpaid';
+      if (/lunas|selesai|paid/.test(lower)) filters.payment_status = 'paid';
+      if (/terbaru|latest/.test(lower)) filters.sort = 'created_at:desc';
+      if (/besok/.test(lower)) filters.date_offset = '+1d';
+      if (emailMatch) filters.recipient = emailMatch[0];
+      if (limitValue !== null) filters.limit = limitValue;
+
+      const payload = {
+        schema_version: '1.0',
+        intent: intent,
+        target_entity: targetEntity,
+        parameters: Object.keys(filters).length > 0 ? filters : { raw_query: text.trim() },
+        safety: {
+          risk_level: riskLevel,
+          requires_confirmation: riskLevel === 'high'
+        },
+        confidence: 0.94
+      };
+
+      return {
+        output: JSON.stringify(payload, null, 2),
+        explanation: `Sistem mendeteksi niat "${intent}" pada entitas "${targetEntity}" dengan tingkat risiko "${riskLevel}" dan memetakannya ke skema JSON siap-API.`
+      };
+    }
+
+    // 2. Engine Penerjemah: Natural Language to SQL (Parameterized)
+    function translateToSQL(text) {
+      const lower = text.toLowerCase();
+      let table = 'records';
+      if (/(user|pengguna|pelanggan|member|akun)/.test(lower)) table = 'users';
+      else if (/(pesanan|order)/.test(lower)) table = 'orders';
+      else if (/(transaksi|pembayaran)/.test(lower)) table = 'transactions';
+      else if (/(produk|barang|item)/.test(lower)) table = 'products';
+
+      const isCount = /(hitung|jumlah|berapa|total|count)/.test(lower);
+      const isSum = /(total nilai|jumlah nominal|akumulasi|sum)/.test(lower);
+      const numberMatch = lower.match(/\b(\d+)\b/);
+      const numVal = numberMatch ? parseInt(numberMatch[1], 10) : null;
+
+      const conditions = [];
+      const params = [];
+
+      if (/aktif/.test(lower)) {
+        conditions.push(`status = :status`);
+        params.push(`:status = 'active'`);
+      }
+      if (/lunas|selesai|paid/.test(lower)) {
+        conditions.push(`payment_status = :payment_status`);
+        params.push(`:payment_status = 'paid'`);
+      }
+      if (/belum dibayar|unpaid/.test(lower)) {
+        conditions.push(`payment_status = :payment_status`);
+        params.push(`:payment_status = 'unpaid'`);
+      }
+      if (/bulan ini/.test(lower)) {
+        conditions.push(`created_at >= DATE_TRUNC('month', CURRENT_DATE)`);
+      }
+      if (/hari ini/.test(lower)) {
+        conditions.push(`DATE(created_at) = CURRENT_DATE`);
+      }
+      if (/stok kurang dari/.test(lower) && numVal !== null) {
+        conditions.push(`stock < :max_stock`);
+        params.push(`:max_stock = ${numVal}`);
+      }
+      if (/(di atas|lebih dari|>)/.test(lower) && numVal !== null && !/stok/.test(lower)) {
+        conditions.push(`amount > :min_amount`);
+        params.push(`:min_amount = ${numVal}`);
+      }
+
+      let selectClause = `SELECT *`;
+      if (isSum) selectClause = `SELECT COALESCE(SUM(amount), 0) AS total_amount`;
+      else if (isCount) selectClause = `SELECT COUNT(*) AS total_count`;
+
+      let sql = `-- Kueri SQL Berparameter (Aman dari SQL Injection)\n${selectClause}\nFROM ${table}`;
+      if (conditions.length > 0) {
+        sql += `\nWHERE ${conditions.join('\n  AND ')}`;
+      }
+      if (/terbaru|latest/.test(lower) && !isCount && !isSum) {
+        sql += `\nORDER BY created_at DESC`;
+      }
+      if (!isCount && !isSum && numVal !== null && !/stok|di atas|lebih dari/.test(lower)) {
+        sql += `\nLIMIT ${numVal};`;
+      } else {
+        sql += `;`;
+      }
+
+      if (params.length > 0) {
+        sql += `\n\n-- Parameter Terikat:\n-- ${params.join(', ')}`;
+      }
+
+      return {
+        output: sql,
+        explanation: `Perintah dipetakan ke tabel "${table}" menggunakan placeholder parameter (:param) agar aman saat dieksekusi di mesin basis data.`
+      };
+    }
+
+    // 3. Engine Penerjemah: CLI / Linux Bash Command
+    function translateToCLI(text) {
+      const lower = text.toLowerCase();
+      let cmd = '';
+      let desc = '';
+
+      if (/(cari|temukan|find).*pdf/.test(lower)) {
+        const folder = /dokumen|documents/.test(lower) ? '~/Documents' : '.';
+        cmd = `# Mencari seluruh file berekstensi .pdf secara rekursif\n$ find ${folder} -type f -iname "*.pdf"`;
+        desc = `Menggunakan utilitas 'find' dengan pencarian case-insensitive (-iname) untuk menemukan berkas PDF di direktori ${folder}.`;
+      } else if (/(disk|penyimpanan|ruang kosong|kapasitas|storage)/.test(lower)) {
+        cmd = `# Menampilkan penggunaan ruang disk dalam format mudah dibaca (GB/MB)\n$ df -h`;
+        desc = `Perintah 'df -h' (disk free human-readable) memeriksa kapasitas partisi sistem berkas.`;
+      } else if (/(kompres|zip|tar|arsip|backup).*folder/.test(lower)) {
+        cmd = `# Mengompres direktori proyek menjadi arsip tar.gz\n$ tar -czvf backup-proyek-$(date +%Y%m%d).tar.gz ./proyek`;
+        desc = `Menggabungkan dan mengompres folder memakai 'tar' (-c create, -z gzip, -v verbose, -f file) disertai stempel tanggal otomatis.`;
+      } else if (/(log|baris terakhir|tail)/.test(lower)) {
+        const numMatch = lower.match(/\b(\d+)\b/);
+        const lines = numMatch ? numMatch[1] : '20';
+        cmd = `# Memantau ${lines} baris terakhir dari file log aplikasi\n$ tail -n ${lines} -f /var/log/syslog`;
+        desc = `Perintah 'tail -n ${lines} -f' menampilkan baris log terbaru dan terus mengikuti pembaruan secara real-time.`;
+      } else if (/(proses|cpu|ram|memori|memory)/.test(lower)) {
+        cmd = `# Menampilkan penggunaan CPU dan memori proses aktif\n$ ps aux --sort=-%mem | head -n 10`;
+        desc = `Menampilkan 10 proses dengan konsumsi memori tertinggi menggunakan 'ps aux' yang diurutkan menurun.`;
+      } else {
+        const sanitized = text.trim().replace(/"/g, '\\"');
+        cmd = `# Mencari kata kunci di dalam direktori saat ini\n$ grep -rnw '.' -e "${sanitized}"`;
+        desc = `Menggunakan 'grep -rnw' untuk mencari kecocokan teks "${text.trim()}" secara rekursif di seluruh file pada direktori aktif.`;
+      }
+
+      return { output: cmd, explanation: desc };
+    }
+
+    // 4. Engine Penerjemah: Kode Biner 8-Bit & Heksadesimal (UTF-8)
+    function translateToBinary(text) {
+      const encoder = new TextEncoder();
+      const bytes = encoder.encode(text);
+
+      const binaryList = [];
+      const hexList = [];
+      const charBreakdown = [];
+
+      // Buat peta per karakter agar mudah dipahami manusia
+      for (const ch of text) {
+        const chBytes = encoder.encode(ch);
+        const bin = Array.from(chBytes).map(b => b.toString(2).padStart(8, '0')).join(' ');
+        const hex = Array.from(chBytes).map(b => '0x' + b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
+        const displayChar = ch === ' ' ? '[SPASI]' : ch === '\n' ? '[ENTER]' : ch;
+        charBreakdown.push(`${displayChar.padEnd(8, ' ')} -> BIN: ${bin} | HEX: ${hex}`);
+      }
+
+      for (const b of bytes) {
+        binaryList.push(b.toString(2).padStart(8, '0'));
+        hexList.push(b.toString(16).toUpperCase().padStart(2, '0'));
+      }
+
+      const output = [
+        `=== DERETAN BINER (UTF-8 / 8-BIT) ===`,
+        binaryList.join(' '),
+        ``,
+        `=== REPRESENTASI HEKSADESIMAL ===`,
+        hexList.join(' '),
+        ``,
+        `=== PETA KARAKTER KE BYTE ===`,
+        charBreakdown.join('\n')
+      ].join('\n');
+
+      return {
+        output,
+        explanation: `Teks dikodekan menggunakan standar UTF-8 menjadi ${bytes.length} byte (${bytes.length * 8} bit). Setiap blok 8 digit 0/1 mewakili 1 byte memori fisik.`
+      };
+    }
+
+    // 5. Engine Penerjemah: Base64 & Payload Transmisi Sistem
+    function translateToBase64(text) {
+      const encoder = new TextEncoder();
+      const bytes = encoder.encode(text);
+      let binaryStr = '';
+      bytes.forEach((b) => {
+        binaryStr += String.fromCharCode(b);
+      });
+      const base64Encoded = btoa(binaryStr);
+
+      // Hitung checksum sederhana (FNV-1a 32-bit) sebagai simulasi integritas sistem
+      let hash = 0x811c9dc5;
+      for (let i = 0; i < bytes.length; i++) {
+        hash ^= bytes[i];
+        hash = Math.imul(hash, 0x01000193);
+      }
+      const checksumHex = (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
+
+      const output = [
+        `BASE64_PAYLOAD : ${base64Encoded}`,
+        `URI_SAFE_TOKEN : ${encodeURIComponent(base64Encoded)}`,
+        `CHECKSUM_FNV1A : 0x${checksumHex}`,
+        `BYTE_LENGTH    : ${bytes.length} bytes`
+      ].join('\n');
+
+      return {
+        output,
+        explanation: `Teks diubah menjadi format Base64 yang aman dikirim melalui protokol HTTP/JSON tanpa merusak karakter khusus, dilengkapi checksum FNV-1a untuk verifikasi integritas.`
+      };
+    }
+
+    // Fungsi Utama Run Translation
+    function runTranslation() {
+      const inputText = humanInput.value.trim();
+      if (!inputText) {
+        const emptyMsg = '// Silakan ketik perintah bahasa manusia terlebih dahulu di kolom sebelah kiri.';
+        systemOutputDisplay.textContent = emptyMsg;
+        rawOutputCopy.value = '';
+        currentRawOutput = '';
+        systemExplanation.textContent = 'Menunggu input teks dari pengguna.';
+        outputStats.textContent = '0 karakter • 0 byte';
+        return;
+      }
+
+      let result;
+      switch (currentMode) {
+        case 'json':
+          result = translateToJSON(inputText);
+          break;
+        case 'sql':
+          result = translateToSQL(inputText);
+          break;
+        case 'cli':
+          result = translateToCLI(inputText);
+          break;
+        case 'binary':
+          result = translateToBinary(inputText);
+          break;
+        case 'base64':
+          result = translateToBase64(inputText);
+          break;
+        default:
+          result = translateToJSON(inputText);
+      }
+
+      currentRawOutput = result.output;
+      rawOutputCopy.value = result.output;
+      systemOutputDisplay.innerHTML = highlightSyntax(result.output, currentMode);
+      systemExplanation.textContent = result.explanation;
+
+      const byteLen = new TextEncoder().encode(result.output).length;
+      outputStats.textContent = `${result.output.length} karakter • ${byteLen} byte`;
+    }
+
+    // Perbarui Tampilan Tab Mode & Contoh Cepat
+    function setMode(mode) {
+      currentMode = mode;
+      const config = MODES[mode];
+
+      modeTabs.forEach((btn) => {
+        const isActive = btn.dataset.mode === mode;
+        if (isActive) {
+          btn.className = 'mode-tab text-left p-3 rounded-xl border border-indigo-500 bg-indigo-600/10 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 shadow-sm transition flex flex-col gap-1';
+        } else {
+          btn.className = 'mode-tab text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 transition flex flex-col gap-1';
+        }
+      });
+
+      modeBadge.textContent = `Mode: ${config.label}`;
+      syntaxTag.textContent = config.tag;
+      humanInput.placeholder = config.placeholder;
+
+      // Render tombol contoh cepat
+      quickExamples.innerHTML = '';
+      config.examples.forEach((exampleText) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.textContent = exampleText;
+        chip.className = 'text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-100 dark:bg-slate-800/90 dark:hover:bg-indigo-900/50 text-slate-700 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200/80 dark:border-slate-700/80 transition text-left';
+        chip.addEventListener('click', () => {
+          humanInput.value = exampleText;
+          runTranslation();
+        });
+        quickExamples.appendChild(chip);
+      });
+
+      // Jika sudah ada teks di input, langsung terjemahkan ulang ke mode baru
+      if (humanInput.value.trim()) {
+        runTranslation();
+      }
+    }
+
+    // Fungsi Copy-Paste yang andal (mendukung iframe & browser standar)
+    function copyOutputToClipboard() {
+      if (!currentRawOutput) return;
+
+      try {
+        rawOutputCopy.classList.remove('sr-only');
+        rawOutputCopy.select();
+        rawOutputCopy.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        rawOutputCopy.classList.add('sr-only');
+        window.getSelection().removeAllRanges();
+        showCopySuccess();
+      } catch (err) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentRawOutput).then(showCopySuccess);
+        }
+      }
+    }
+
+    let toastTimer = null;
+    function showCopySuccess() {
+      copyBtnText.textContent = 'Tersalin!';
+      copyIcon.classList.add('hidden');
+      checkIcon.classList.remove('hidden');
+
+      copyToast.classList.remove('opacity-0', 'translate-y-3');
+      copyToast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        copyBtnText.textContent = 'Copy / Salin';
+        copyIcon.classList.remove('hidden');
+        checkIcon.classList.add('hidden');
+        copyToast.classList.add('opacity-0', 'translate-y-3');
+        copyToast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    // Event Listeners
+    modeTabs.forEach((btn) => {
+      btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    });
+
+    translateBtn.addEventListener('click', runTranslation);
+
+    humanInput.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        runTranslation();
+      }
+    });
+
+    clearInputBtn.addEventListener('click', () => {
+      humanInput.value = '';
+      humanInput.focus();
+      runTranslation();
+    });
+
+    copyBtn.addEventListener('click', copyOutputToClipboard);
+
+    themeToggleBtn.addEventListener('click', () => {
+      htmlEl.classList.toggle('dark');
+    });
+
+    openGuideBtn.addEventListener('click', () => {
+      githubGuideSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Inisialisasi awal saat halaman dimuat
+    setMode('json');
+    humanInput.value = MODES.json.examples[0];
+    runTranslation();
+  </script>
+</body>
+</html>
+```
